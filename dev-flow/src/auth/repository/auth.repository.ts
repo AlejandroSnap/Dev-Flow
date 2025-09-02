@@ -1,25 +1,12 @@
 import { Injectable } from '@nestjs/common';
-
-class User {
-    username: string;
-    password: string
-}
+import { UsersEntity } from '../entity/users.entity';
 
 @Injectable()
-export class AuthRepository { 'Logica de acceso de datos'
-private users = [
-    {
-        username : "user",
-        password: "admin1234",
+export class AuthRepository {
+    
+    async validateUserPassword(email: string, password: string) : Promise<UsersEntity | undefined> {
+        let response = users.filter((user) => user.email == email && user.password == password);
+        return (response) ? response.at(0) : undefined;
     }
-];
 
-  findUser(user: User): boolean {
-    for (const [_, data] of Object.entries(this.users)) {
-        if (data.username == user.username) {
-            return data.password == user.password
-        }
-    }
-    return false
-  }
 }

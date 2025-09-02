@@ -1,21 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { RequestLogin } from '../dto/auth.request.dto';
 import { AuthRepository } from '../repository/auth.repository';
-
-class User {
-    username: string;
-    password: string;
-}
+import { ResponseLogin } from '../dto/auth.response.dto';
 
 @Injectable()
 export class AuthService {
-constructor(private readonly authRepository: AuthRepository) {}
 
-  login(data: User): string {
-    let success: boolean = this.authRepository.findUser(data)
-    if (success) {
-        return "Bienvenido"
+    constructor (private readonly authRepository: AuthRepository) {}
+
+    async login(loginCredentials: RequestLogin) : Promise<ResponseLogin> {
+
+        const userInfo = await this.authRepository.validateUserPassword(loginCredentials.email, loginCredentials.password);
+        const response = { 
+            message: (userInfo) ? userInfo.name : "Bad credentials"
+        }
+        return response;
     }
-
-    return "Email o Contraseña invalido."
-  }
 }
