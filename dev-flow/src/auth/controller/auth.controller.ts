@@ -12,7 +12,6 @@ export class AuthController {
         return await this.authService.login(payload);
     }
 
-
     @Post("signup")
     async signup(): Promise<string> {
         return "registered";
