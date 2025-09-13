@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Param } from "@nestjs/common";
 import { BoardService } from "../service/board.service";
-import { RequestBoard } from "../dto/board.resquestboard";
-import { Board } from "../board.interface";
+import { RequestBoard, RequestID } from "../dto/board.resquest";
+import { Board } from "../schema/board.schema";
 
-@Controller('Boards')
+@Controller('boards')
 export class BoardController {
     constructor(private readonly boardservice: BoardService) {}
 
@@ -14,13 +14,13 @@ export class BoardController {
     }
 
     @Post('crear_tablero')
-    async create(@Body() dto: RequestBoard): Promise<Board> {
-        return await this.boardservice.create(dto);
+    async create(@Body() namedto: RequestBoard): Promise<Board> {
+        return await this.boardservice.create(namedto.name);
     }
 
     @Post(':id/members')
-    async addmember(@Param('id') id: string, @Body('userId') userId: string): Promise<Board> {
-        return await this.boardservice.addmember(id, userId);
+    async addmember(@Param('id') id: string, @Body() userIddto: RequestID): Promise<Board> {
+        return await this.boardservice.addmember(id, userIddto.Id);
     }
 
 }

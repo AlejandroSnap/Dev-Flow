@@ -6,3 +6,9 @@ export class RequestBoard {
     name: string;
 }
 
+export class RequestID {
+    @IsString()
+    @IsNotEmpty()
+    Id: string;
+}
+
