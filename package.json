@@ -1,11 +1,5 @@
 {
   "dependencies": {
-    "@nestjs/core": "^11.1.6",
-    "@nestjs/mongoose": "^11.0.3",
-    "class-validator": "^0.14.2",
-    "mongoose": "^8.18.0"
-  },
-  "devDependencies": {
-    "@types/node": "^24.3.0"
+    "@nestjs/config": "^4.0.2"
   }
 }

@@ -1,10 +1,22 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
-import { SharedModule } from './modules/shared/shared.module';
-import { WorkspaceModule } from './workspaces/workspaces.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
+
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { WorkspaceModule } from './modules/workspace/workspace.module';
 
 @Module({
-  imports: [AuthModule, SharedModule, WorkspaceModule],
+  imports: [
+    MongooseModule.forRoot('mongodb://user:pass@localhost:27017/dev-flow?authSource=admin'),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    
+    AuthModule,
+    UsersModule,
+    WorkspaceModule,
+  ],
   controllers: [],
   providers: [],
 })

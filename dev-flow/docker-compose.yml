@@ -1,8 +1,0 @@
-services:
-  db:
-    image: mongodb/mongodb-community-server:latest
-    container_name: jsrl_db
-    ports:
-      - "27017:27017"
-    environment:
-      MONGODB_INITDB_ROOT_USERNAME=user
