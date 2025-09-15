@@ -6,6 +6,7 @@ export declare class Workspace {
     owner: Types.ObjectId;
     columns: string[];
     members: Types.ObjectId[];
+    : any;
 }
 export declare const WorkspaceSchema: import("mongoose").Schema<Workspace, import("mongoose").Model<Workspace, any, any, any, Document<unknown, any, Workspace, any, {}> & Workspace & {
     _id: Types.ObjectId;

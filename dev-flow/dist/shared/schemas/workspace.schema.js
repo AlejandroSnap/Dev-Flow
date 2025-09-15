@@ -18,6 +18,7 @@ let Workspace = class Workspace {
     owner;
     columns;
     members;
+    ;
 };
 exports.Workspace = Workspace;
 __decorate([
@@ -40,6 +41,10 @@ __decorate([
     (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Types.ObjectId, ref: 'User' }], default: [] }),
     __metadata("design:type", Array)
 ], Workspace.prototype, "members", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({}),
+    __metadata("design:type", Object)
+], Workspace.prototype, "", void 0);
 exports.Workspace = Workspace = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Workspace);
