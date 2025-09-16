@@ -1,41 +1,35 @@
-import { Controller, Get, Post, Body, Param } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, UseGuards, Request, Delete, Patch } from "@nestjs/common";
 import { BoardService } from "../service/board.service";
-import { RequestBoard } from "../dto/board.resquestboard";
-import { Board } from "../board.interface";
-import { taskCreate } from "src/modules/task/dto/create-taskdto";
+import { CreateBoardDto } from "../dto/create-board.dto";
+import { JwtAuthGuard } from "src/modules/auth/guard/jwt-auth.guard";
+import { UpdateBoardDto } from "../dto/update-board.dto";
 
 @Controller('Boards')
 export class BoardController {
     constructor(private readonly boardservice: BoardService) {}
 
-
-    @Get()
-    async getboard(): Promise<Board[]>{
-        return await this.boardservice.find();
+    @UseGuards(JwtAuthGuard)
+    @Post(':workspaceId')
+    create(@Request() req,@Param('workspaceId') workspaceId: string, @Body() dto: CreateBoardDto
+    ) {
+        return this.boardservice.create(req.user.userId, workspaceId, dto);
     }
 
-    @Post('crear_tablero')
-    async create(@Body() dto: RequestBoard): Promise<Board> {
-        return await this.boardservice.create(dto);
+    @UseGuards(JwtAuthGuard)
+    @Get(':id')
+    findById(@Param('id') id: string) {
+        return this.boardservice.findById(id);
     }
 
-    @Post(':id/members')
-    async addmember(@Param('id') id: string, @Body('userId') userId: string): Promise<Board> {
-        return await this.boardservice.addmember(id, userId);
+    @UseGuards(JwtAuthGuard)
+    @Patch(':id')
+    update(@Request() req, @Param('id') id: string, @Body() dto: UpdateBoardDto) {
+        return this.boardservice.update(req.user.userId, id, dto);
     }
 
-    @Post(':addTask')
-    async addTask(boardId: string, dto: taskCreate){
-        return await this.boardservice.addTask(boardId,dto)
+    @UseGuards(JwtAuthGuard)
+    @Delete(':id')
+    delete(@Param('id') id: string) {
+        return this.boardservice.delete(id);
     }
-
-    @Post(':removeTask')
-    async removeTask(boardId: string, taskname: string){
-        return await this.boardservice.removeTask(boardId,taskname)
-    }
-
-    @Post(':editName')
-   async editTask(boardId: string, taskName: string, newName?: string, newDescription?: string){
-        return await this.boardservice.editTask(boardId,taskName,newName,newDescription)
-   }
 }

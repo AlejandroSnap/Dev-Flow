@@ -1,83 +1,57 @@
-import { Injectable } from "@nestjs/common";
-import { Board } from "../board.interface";
-import { RequestBoard } from "../dto/board.resquestboard";
-import { taskService } from "src/modules/task/Service/task.service";
-import { taskCreate } from "src/modules/task/dto/create-taskdto";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { Board, BoardDocument } from "src/shared/schemas/board.schema";
+import { Model, Types } from "mongoose";
+import { Workspace, WorkspaceDocument } from "src/shared/schemas/workspace.schema";
+import { InjectModel } from "@nestjs/mongoose";
+import { UpdateBoardDto } from "../dto/update-board.dto";
+import { CreateBoardDto } from "../dto/create-board.dto";
 
 @Injectable()
 export class BoardService {
-    private boards: Board[] = [];
-    private tasks: taskService
+  constructor(
+    @InjectModel(Board.name) private boardModel: Model<BoardDocument>,
+    @InjectModel(Workspace.name) private workspaceModel: Model<WorkspaceDocument>,
+  ) {}
 
-    async create(boardData: RequestBoard): Promise<Board> {
-        const newboard: Board = {id: Date.now().toString(),
-        name: boardData.name,
-        members: [],
-        task: []
-      }
-      this.boards.push(newboard);
-      return await newboard;
+    async create(userId: string, workspaceId: string, dto: CreateBoardDto ): Promise<BoardDocument> {
+    const workspace = await this.workspaceModel.findById(workspaceId);
+    if (!workspace) throw new NotFoundException('Workspace not found');
+
+    if (!workspace.members.map(m => m.toString()).includes(userId)) {
+      throw new ForbiddenException('You are not a member of this workspace');
     }
 
-    async addmember(boardId: string, userId: string): Promise<Board> {
-        const board = await this.boards.find(b => b.id === boardId);
-        if (!board){ 
-            throw new Error(`Board ${boardId} not found`);
-          }
-        board.members.push(userId)
-        return await board;
-     }
+    const board = new this.boardModel({
+      ...dto,
+      workspaceId: new Types.ObjectId(workspaceId),
+    });
 
-    async find(): Promise<Board[]> {
-          return await this.boards;
-      }
+    await board.save();
 
-    async addTask(boardId: string, dto: taskCreate){
-        const board = this.boards.find(b => b.id === boardId);
-        if(!board){
-            throw new Error("Board no encontrado");
-          }
-        else{
-            const newTask = await this.tasks.create(dto);
-            board.task.push(newTask)
-            return board;
-          }
-      }
+    workspace.boards.push(board._id);
+    await workspace.save();
 
-    async removeTask(boardId: string, taskname: string){
-          const board = this.boards.find(b => b.id === boardId);
-          if(!board){
-              throw new Error("Board no encontrado");
-            }
-          else{
-            const task = board.task.findIndex(b => b.name === taskname);
-            if(task === -1){
-                  throw new Error("tarea no encontrada");
-              }
-            else{
-                board.task.splice(task,1)
-              }
-          }
-          return board
-        }
+    return board;
+  }
 
-    async editTask(boardId: string, taskName: string, newName?: string, newDescription?: string) {
-          const board = this.boards.find(b => b.id === boardId);
-          if (!board) {
-                throw new Error("Board no encontrado");
-            }
-          const task = board.task.find(t => t.name === taskName);
-          if (!task) {
-                throw new Error("Tarea no encontrada");
-            }
-          if(newName){
-                this.tasks.editName(task,newName);
-            }
-          if(newDescription){
-                this.tasks.editDescription(task,newDescription);
-            }
+  async findById(id: string): Promise<BoardDocument> {
+    const board = await this.boardModel.findById(id).populate('tasks');
+    if (!board) throw new NotFoundException('Board not found');
+    return board;
+  }
 
-          return board
-        }
- 
+  async update(userId: string, id: string, dto: UpdateBoardDto): Promise<BoardDocument> {
+    const board = await this.findById(id);
+
+    if (dto.name) board.name = dto.name;
+    if (dto.description) board.description = dto.description;
+    if (dto.addColumn) board.columns.push(dto.addColumn);
+    if (dto.removeColumn) board.columns = board.columns.filter(c => c !== dto.removeColumn);
+
+    return board.save();
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.boardModel.findByIdAndDelete(id);
+  }
 };

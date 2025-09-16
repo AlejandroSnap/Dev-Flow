@@ -1,20 +1,21 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Types, Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
-@Schema({timestamps: true})
+export type TaskDocument = Task & Document;
 
-export class Task{
+@Schema({ timestamps: true })
+export class Task {
+  @Prop({ required: true })
+  title: string;
+  
+  @Prop()
+  description: string;
 
-    @Prop({required: true})
-    name: string;
+  @Prop({ default: 'Pendiente' })
+  status: string;
 
-    @Prop()
-    description: string;
-
-
-    @Prop({ type: Types.ObjectId, ref: 'Workspace', required: true })
-    workspaceId: Types.ObjectId;
-    @Prop({ type: [{ type: Types.ObjectId, ref: 'Task' }] })
-    tasks: Types.ObjectId[];
+  @Prop({ type: Types.ObjectId, ref: 'Board', required: true })
+  boardId: Types.ObjectId;
 }
-export const taskSchema = SchemaFactory.createForClass(Task)
+
+export const TaskSchema = SchemaFactory.createForClass(Task);

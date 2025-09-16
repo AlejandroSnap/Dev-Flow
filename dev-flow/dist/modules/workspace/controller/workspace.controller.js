@@ -26,18 +26,20 @@ let WorkspaceController = class WorkspaceController {
     create(req, dto) {
         return this.workspaceService.create(req.user.userId, dto);
     }
-    findAll(req) {
-        console.log(req.user, req.user.userId);
-        return this.workspaceService.findAllForUser(req.user.userId);
-    }
     update(req, id, dto) {
         return this.workspaceService.update(req.user.userId, id, dto);
+    }
+    async findOne(id) {
+        return this.workspaceService.findById(id);
     }
     delete(req, id) {
         return this.workspaceService.delete(req.user.userId, id);
     }
     invite(req, id, memberId) {
         return this.workspaceService.invite(req.user.userId, id, memberId);
+    }
+    async addBoard(req, workspaceId, body) {
+        return this.workspaceService.addBoard(req.user.userId, workspaceId, body.name, body.description);
     }
 };
 exports.WorkspaceController = WorkspaceController;
@@ -52,14 +54,6 @@ __decorate([
 ], WorkspaceController.prototype, "create", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, common_1.Get)(),
-    __param(0, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], WorkspaceController.prototype, "findAll", null);
-__decorate([
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Param)('id')),
@@ -68,6 +62,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, update_workspace_dto_1.UpdateWorkspaceDto]),
     __metadata("design:returntype", void 0)
 ], WorkspaceController.prototype, "update", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], WorkspaceController.prototype, "findOne", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':id'),
@@ -87,6 +89,16 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, String]),
     __metadata("design:returntype", void 0)
 ], WorkspaceController.prototype, "invite", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)(':id/boards'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Object]),
+    __metadata("design:returntype", Promise)
+], WorkspaceController.prototype, "addBoard", null);
 exports.WorkspaceController = WorkspaceController = __decorate([
     (0, common_1.Controller)('workspaces'),
     __metadata("design:paramtypes", [workspace_service_1.WorkspaceService])

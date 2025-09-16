@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { WorkspaceModule } from './modules/workspace/workspace.module';
+import { BoardModule } from './modules/board/board.module';
+import { taskModule } from './modules/task/task.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { WorkspaceModule } from './modules/workspace/workspace.module';
     AuthModule,
     UsersModule,
     WorkspaceModule,
+    BoardModule,
+    taskModule,
   ],
   controllers: [],
   providers: [],

@@ -14,11 +14,11 @@ export class Workspace {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true }) // dueño
   owner: Types.ObjectId;
 
-  @Prop({ type: [String], default: ['Pendiente', 'In Progress', 'Finished'] }) // las columnas donde se ponene las tareas
-  columns: string[];
-
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }], default: [] }) // usuarios invitados
   members: Types.ObjectId[];
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Board' }], default: [] }) // boards asociados
+  boards: Types.ObjectId[];
 }
 
 export const WorkspaceSchema = SchemaFactory.createForClass(Workspace);

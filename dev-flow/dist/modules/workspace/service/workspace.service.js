@@ -17,13 +17,13 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const workspace_schema_1 = require("../../../shared/schemas/workspace.schema");
-const user_schema_1 = require("../../../shared/schemas/user.schema");
+const board_schema_1 = require("../../../shared/schemas/board.schema");
 let WorkspaceService = class WorkspaceService {
     workspaceModel;
-    userModel;
-    constructor(workspaceModel, userModel) {
+    boardModel;
+    constructor(workspaceModel, boardModel) {
         this.workspaceModel = workspaceModel;
-        this.userModel = userModel;
+        this.boardModel = boardModel;
     }
     async create(ownerId, dto) {
         if (!mongoose_2.Types.ObjectId.isValid(ownerId)) {
@@ -33,14 +33,9 @@ let WorkspaceService = class WorkspaceService {
             ...dto,
             owner: new mongoose_2.Types.ObjectId(ownerId),
             members: [new mongoose_2.Types.ObjectId(ownerId)],
+            boards: [],
         });
         return await workspace.save();
-    }
-    async findAllForUser(userId) {
-        if (!mongoose_2.Types.ObjectId.isValid(userId)) {
-            throw new common_1.BadRequestException('User ID invalid.');
-        }
-        return this.workspaceModel.find({ members: userId }).exec();
     }
     async findById(id) {
         const workspace = await this.workspaceModel.findById(id);
@@ -57,10 +52,6 @@ let WorkspaceService = class WorkspaceService {
             workspace.name = dto.name;
         if (dto.isPublic !== undefined)
             workspace.isPublic = dto.isPublic;
-        if (dto.addColumn)
-            workspace.columns.push(dto.addColumn);
-        if (dto.removeColumn)
-            workspace.columns = workspace.columns.filter(c => c !== dto.removeColumn);
         return workspace.save();
     }
     async delete(userId, id) {
@@ -68,6 +59,7 @@ let WorkspaceService = class WorkspaceService {
         if (workspace.owner.toString() !== userId) {
             throw new common_1.ForbiddenException('Only owner can delete workspace');
         }
+        await this.boardModel.deleteMany({ workspaceId: id });
         return this.workspaceModel.findByIdAndDelete(id);
     }
     async invite(userId, workspaceId, memberId) {
@@ -81,12 +73,28 @@ let WorkspaceService = class WorkspaceService {
         }
         return workspace;
     }
+    async addBoard(userId, workspaceId, name, description) {
+        const workspace = await this.findById(workspaceId);
+        if (workspace.owner.toString() !== userId && !workspace.members.includes(new mongoose_2.Types.ObjectId(userId))) {
+            throw new common_1.ForbiddenException('Only members can add boards');
+        }
+        const board = new this.boardModel({
+            name,
+            description,
+            workspaceId: workspace._id,
+            tasks: [],
+        });
+        await board.save();
+        workspace.boards.push(board._id);
+        await workspace.save();
+        return board;
+    }
 };
 exports.WorkspaceService = WorkspaceService;
 exports.WorkspaceService = WorkspaceService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(workspace_schema_1.Workspace.name)),
-    __param(1, (0, mongoose_1.InjectModel)(user_schema_1.User.name)),
+    __param(1, (0, mongoose_1.InjectModel)(board_schema_1.Board.name)),
     __metadata("design:paramtypes", [mongoose_2.Model,
         mongoose_2.Model])
 ], WorkspaceService);

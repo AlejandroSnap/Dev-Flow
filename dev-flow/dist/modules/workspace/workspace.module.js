@@ -13,12 +13,19 @@ const workspace_service_1 = require("./service/workspace.service");
 const workspace_controller_1 = require("./controller/workspace.controller");
 const workspace_schema_1 = require("../../shared/schemas/workspace.schema");
 const users_module_1 = require("../users/users.module");
+const board_schema_1 = require("../../shared/schemas/board.schema");
 let WorkspaceModule = class WorkspaceModule {
 };
 exports.WorkspaceModule = WorkspaceModule;
 exports.WorkspaceModule = WorkspaceModule = __decorate([
     (0, common_1.Module)({
-        imports: [mongoose_1.MongooseModule.forFeature([{ name: workspace_schema_1.Workspace.name, schema: workspace_schema_1.WorkspaceSchema }]), users_module_1.UsersModule],
+        imports: [
+            mongoose_1.MongooseModule.forFeature([
+                { name: workspace_schema_1.Workspace.name, schema: workspace_schema_1.WorkspaceSchema },
+                { name: board_schema_1.Board.name, schema: board_schema_1.BoardSchema }
+            ]),
+            users_module_1.UsersModule
+        ],
         controllers: [workspace_controller_1.WorkspaceController],
         providers: [workspace_service_1.WorkspaceService],
         exports: [workspace_service_1.WorkspaceService]

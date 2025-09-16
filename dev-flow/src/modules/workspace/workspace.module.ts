@@ -6,9 +6,15 @@ import { WorkspaceController } from './controller/workspace.controller';
 
 import { Workspace, WorkspaceSchema } from 'src/shared/schemas/workspace.schema';
 import { UsersModule } from '../users/users.module';
+import { Board, BoardSchema } from 'src/shared/schemas/board.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Workspace.name, schema: WorkspaceSchema }]), UsersModule],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Workspace.name, schema: WorkspaceSchema },
+      { name: Board.name, schema: BoardSchema}
+     ]),
+    UsersModule],
   controllers: [WorkspaceController],
   providers: [WorkspaceService],
   exports: [WorkspaceService]

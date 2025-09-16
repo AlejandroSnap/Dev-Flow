@@ -13,6 +13,8 @@ const config_1 = require("@nestjs/config");
 const auth_module_1 = require("./modules/auth/auth.module");
 const users_module_1 = require("./modules/users/users.module");
 const workspace_module_1 = require("./modules/workspace/workspace.module");
+const board_module_1 = require("./modules/board/board.module");
+const task_module_1 = require("./modules/task/task.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -26,6 +28,8 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
             workspace_module_1.WorkspaceModule,
+            board_module_1.BoardModule,
+            task_module_1.taskModule,
         ],
         controllers: [],
         providers: [],

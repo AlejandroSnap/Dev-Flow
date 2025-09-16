@@ -16,9 +16,8 @@ let Workspace = class Workspace {
     name;
     isPublic;
     owner;
-    columns;
     members;
-    ;
+    boards;
 };
 exports.Workspace = Workspace;
 __decorate([
@@ -34,17 +33,13 @@ __decorate([
     __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Workspace.prototype, "owner", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: [String], default: ['Pendiente', 'In Progress', 'Finished'] }),
-    __metadata("design:type", Array)
-], Workspace.prototype, "columns", void 0);
-__decorate([
     (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Types.ObjectId, ref: 'User' }], default: [] }),
     __metadata("design:type", Array)
 ], Workspace.prototype, "members", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({}),
-    __metadata("design:type", Object)
-], Workspace.prototype, "", void 0);
+    (0, mongoose_1.Prop)({ type: [{ type: mongoose_2.Types.ObjectId, ref: 'Board' }], default: [] }),
+    __metadata("design:type", Array)
+], Workspace.prototype, "boards", void 0);
 exports.Workspace = Workspace = __decorate([
     (0, mongoose_1.Schema)({ timestamps: true })
 ], Workspace);

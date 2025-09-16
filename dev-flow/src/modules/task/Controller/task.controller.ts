@@ -1,25 +1,36 @@
-import { Controller,Post,Get,Body } from "@nestjs/common";
-import { taskService } from "../Service/task.service";
+import { Controller, Post, Get, Put, Delete, Body, Param, NotFoundException, Patch, UseGuards } from "@nestjs/common";
+
+import { TaskService } from "../Service/task.service";
+
 import { taskCreate } from "../dto/create-taskdto";
-import { Task } from "../../../shared/schemas/task.schema";
+import { UpdateTaskDto } from "../dto/update-task.dto";
+import { JwtAuthGuard } from "src/modules/auth/guard/jwt-auth.guard";
 
-@Controller('task')
-export class taskController{
+@Controller("tasks")
+export class TaskController {
+    constructor(private readonly taskService: TaskService) { }
 
-    constructor (private readonly taskservice: taskService){}
-
-    @Post('create')
-    create(@Body() dto: taskCreate){
-        return this.taskservice.create(dto)
-    }
-    
-    @Post('editName')
-    editName(dto: Task, name: string){
-        return this.taskservice.editName(dto,name)
+    @UseGuards(JwtAuthGuard)
+    @Post(":boardId")
+    async createTask(@Param("boardId") boardId: string, @Body() dto: taskCreate) {
+        return this.taskService.create(dto, boardId);
     }
 
-    @Post('editDescription')
-    editDescriptionTask(dto: Task, name: string){
-        return this.taskservice.editDescription(dto,name)
+    @UseGuards(JwtAuthGuard)
+    @Get(":id")
+    async getTask(@Param("id") id: string) {
+        return this.taskService.findById(id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Patch(":id")
+    async updateTask(@Param("id") id: string, @Body() dto: UpdateTaskDto) {
+        return this.taskService.update(id, dto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete(":id")
+    async deleteTask(@Param("id") id: string) {
+        return this.taskService.delete(id);
     }
 }

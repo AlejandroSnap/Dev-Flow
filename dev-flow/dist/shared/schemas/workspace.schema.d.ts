@@ -4,9 +4,8 @@ export declare class Workspace {
     name: string;
     isPublic: boolean;
     owner: Types.ObjectId;
-    columns: string[];
     members: Types.ObjectId[];
-    : any;
+    boards: Types.ObjectId[];
 }
 export declare const WorkspaceSchema: import("mongoose").Schema<Workspace, import("mongoose").Model<Workspace, any, any, any, Document<unknown, any, Workspace, any, {}> & Workspace & {
     _id: Types.ObjectId;
